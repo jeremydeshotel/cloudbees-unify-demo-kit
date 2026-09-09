@@ -41,11 +41,11 @@ jobs:
     steps:
       - name: Checkout source
         uses: https://github.com/cloudbees-io/checkout@v1
-      - name: Run unit tests
+      - name: Describe recorded demo test results
         uses: docker://node:20-alpine
         shell: sh
         run: |
-          echo "Running unit tests for orders-api (recorded results in test-reports/junit.xml)"
+          echo "Publishing a recorded demo fixture; no application tests execute in this step"
           echo "14 passed, 1 failed, 1 skipped"
       - name: Publish test results
         uses: cloudbees-io/publish-test-results@v2
@@ -57,7 +57,9 @@ jobs:
         uses: https://github.com/cloudbees-io/publish-evidence-item@v1
         with:
           content: |-
-            ## Unit tests — orders-api
+            ## Recorded demo test results — orders-api
+            This is a static fixture, not a fresh application test run. The workflow
+            deliberately continues so that the test failure can be explored in the UI.
             - Tests: 16
             - Passed: 14
             - Failed: 1 (`test_retry_on_gateway_timeout`)
@@ -69,22 +71,21 @@ jobs:
     steps:
       - name: Checkout source
         uses: https://github.com/cloudbees-io/checkout@v1
-      - name: Note on automatic security scanning
+      - name: Explain the security demo fixture
         uses: docker://alpine:3.20
         shell: sh
         run: |
-          echo "CloudBees Unify automatically scans connected repositories for"
-          echo "secrets and vulnerabilities."
-          echo "Findings appear in the component's Security tab — including the"
-          echo "hardcoded credential intentionally added in src/config.py."
+          echo "This job does not execute a security scanner or enforce a security policy."
+          echo "The repository includes an intentional credential-shaped demo fixture."
+          echo "Check the component Security tab to verify actual scanner configuration and findings."
       - name: Publish evidence
         uses: https://github.com/cloudbees-io/publish-evidence-item@v1
         with:
           content: |-
-            ## Security — automatic scanning
-            CloudBees Unify automatically scans this repository. Findings — including
-            the **hardcoded credential** in `src/config.py` — are shown in the
-            component's **Security** tab for triage and remediation tracking.
+            ## Security — demo fixture and verification boundary
+            This job does not run a scanner. `src/config.py` contains an intentional
+            credential-shaped fixture. Verify scanning and findings in this organization's
+            component **Security** tab before describing them as observed results.
   package:
     steps:
       - name: Checkout source
@@ -102,8 +103,9 @@ jobs:
             "version": "1.4.${{ cloudbees.run_number }}",
             "commit": "${{ cloudbees.scm.sha }}",
             "scenario": "candidate-demo",
-            "securityPolicy": "passed",
-            "testStatus": "passed"
+            "simulation": true,
+            "securityPolicy": "not-evaluated-by-this-workflow",
+            "testStatus": "recorded-fixture-14-passed-1-failed-1-skipped"
           }
           JSON
           cat build/release-metadata.json
@@ -125,8 +127,9 @@ jobs:
             - Registered artifact ID: ${{ steps.register-artifact.outputs.artifact-id }}
             - Artifact URL: docker.io/cloudbeesdemo/orders-api:1.4.${{ cloudbees.run_number }}
             - Commit: ${{ cloudbees.scm.sha }}
-            - Security policy: passed
-            - Tests: passed
+            - Security policy: not evaluated by this workflow
+            - Tests: recorded fixture; 14 passed, 1 failed, 1 skipped
+            - Artifact: metadata registration only; no container image is built or pushed
     needs:
       - security-scan
     outputs:

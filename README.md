@@ -5,7 +5,9 @@ A lightweight starter kit for SE candidates building a CloudBees Unify demo as p
 > **Release Orchestration lives in a separate repo.** In CloudBees Unify an Application and a Component cannot be the same repository, so the staged, governed **release workflows** are in the Application repo:
 > **[cb-demos/cloudbees-unify-demo-app](https://github.com/cb-demos/cloudbees-unify-demo-app)**
 
-**Everything here is self-contained and mock/echo-based.** The workflows run green in any CloudBees Unify organization with **no clusters, secrets, registries, or third-party integrations required**. Fork it, connect it to Unify, and click **Run**.
+**This is a simulated application delivery demo.** CloudBees runs the orchestration, publishes recorded test results and evidence, and registers artifact metadata. No cluster, registry, or third-party service credentials are required. Connect the repository to Unify and verify a run in your organization before presenting.
+
+The JUnit fixture intentionally includes **14 passed tests, one failed test, and one skipped test**. This workflow does not execute application tests or a security scanner, and it does not build a container image. A green workflow is not proof of passing application quality checks. Inspect actual security findings separately in the component Security tab.
 
 ## Quick start
 
